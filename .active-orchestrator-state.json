@@ -1,5 +1,104 @@
 {
   "version": 5,
-  "step": "discovery",
-  "owner": "active-orchestrator"
+  "step": "kb",
+  "owner": "active-orchestrator",
+  "discovery": {
+    "created_by": "discovery-research",
+    "sources": [
+      "Consigna Parcial: La librería con despliegue en el VPS (UTN Programación III)"
+    ],
+    "competitors": [],
+    "problema": "Construcción de un backend API REST asincrónico para catálogo y ventas de una librería de barrio, integrando FastAPI, SQLModel y PostgreSQL (asyncpg), modelando relaciones relacionales avanzadas sin N+1, y desplegado en Docker Alpine en VPS sin secretos.",
+    "usuarios": [
+      "Personal de librería (administración de catálogo y ventas)",
+      "Clientes (compra y perfil 1:1)",
+      "Cátedra/Evaluador (verificación automatizada)"
+    ],
+    "casos_de_uso": [
+      "CRUD de catálogo (editoriales, géneros, autores)",
+      "Creación y consulta de libros con relaciones (editorial, género, autores con rol y orden) y paginación/filtros",
+      "Gestión de clientes y perfil 1:1",
+      "Registro de venta atómica con renglones (composición), copia de precios de DB y total calculado por servidor",
+      "Endpoints de salud /health/live y /health/ready"
+    ],
+    "funcionalidades_necesarias": [
+      "Ciclo de vida asincrónico, sesión con Depends(get_session) y create_all",
+      "Modelos SQLModel con restricciones completas (UNIQUE, CHECK, FKs con índices, Decimal)",
+      "Contratos DTO separados, respuestas 201/404/409/422, paginación y búsqueda con parámetros ligados",
+      "Altas con relaciones traduciendo rechazos de FK a 409",
+      "Lecturas sin N+1 con joinedload y selectinload",
+      "Asincronía sin bloqueos y BackgroundTasks",
+      "Dockerfile con python:3.12-alpine, usuario no-root, sin secretos, HEALTHCHECK 127.0.0.1",
+      "Despliegue en VPS, script de datos iniciales, test/*.http y DEPLOY.md"
+    ],
+    "funcionalidades_opcionales": [
+      "Autenticación y autorización (Cap 5)",
+      "Repositorios y Unit of Work (Cap 6)",
+      "Colas con Redis/Celery (Caps 7 y 8)",
+      "Docker Compose",
+      "Migraciones con Alembic",
+      "PATCH de ventas"
+    ],
+    "reglas_de_negocio": [
+      "RN-01: ISBN único (UNIQUE, 409)",
+      "RN-02: Email cliente único (UNIQUE, 409)",
+      "RN-03: Precio > 0 y stock >= 0 (CHECK y validación DTO)",
+      "RN-04: Venta creada con renglones anidados",
+      "RN-05: Al menos un renglón por venta y sin libros duplicados (422)",
+      "RN-06: Precio de renglón copiado del libro al registrar venta",
+      "RN-07: Total calculado por el servidor",
+      "RN-08: Ventas no modificables (sin PATCH)",
+      "RN-09: Un cliente tiene como máximo un perfil (UNIQUE en perfil_cliente.cliente_id, 409)",
+      "RN-10: Paginación con limit (1 a 100, def 20) y offset (>= 0)",
+      "RN-11: Búsqueda de libros por título case-insensitive con parámetros ligados",
+      "RN-12: Errores limpios sin exponer trazas ni texto interno de Postgres (IntegrityError a 409)"
+    ],
+    "integraciones": [
+      "PostgreSQL 16 asincrónico vía postgresql+asyncpg",
+      "python-dotenv / variables de entorno",
+      "Uvicorn ASGI server"
+    ],
+    "restricciones": [
+      "Python 3.12, FastAPI >= 0.111, SQLModel >= 0.0.24, SQLAlchemy 2.0 async, asyncpg >= 0.30",
+      "Estructura fija por módulos: app/main.py, app/core/, app/modules/<módulo>/",
+      "Decimal para dinero, nunca float",
+      "Imagen base python:3.12-alpine (< 100 MB)",
+      "Entrega en zip sin .venv, __pycache__ ni .env"
+    ],
+    "riesgos": [
+      "Consultas N+1 inadvertidas si falta eager loading",
+      "Mapeo y traducción de IntegrityError sin filtrar texto interno",
+      "Resolución de localhost en Alpine con wget (usar 127.0.0.1)"
+    ],
+    "preguntas_abiertas": [
+      "Datos del grupo para README.md y nombre del .zip (resuelto por el usuario)",
+      "Datos finales de VPS y PostgreSQL (se parametrizan en variables de entorno)"
+    ]
+  },
+  "kb": {
+    "created_by": "kb-creator",
+    "source": "ingest",
+    "discovery": {
+      "problem": "Construcción de un backend API REST asincrónico para catálogo y ventas de una librería de barrio, integrando FastAPI, SQLModel y PostgreSQL (asyncpg), modelando relaciones relacionales avanzadas sin N+1, y desplegado en Docker Alpine en VPS sin secretos.",
+      "system_type": "api",
+      "domain": "libreria_y_ventas",
+      "scale": "team",
+      "stack": "Python 3.12 + FastAPI + SQLModel + SQLAlchemy 2.0 async + asyncpg + PostgreSQL 16 + Docker (Alpine)",
+      "needs_infra": true
+    },
+    "files": [
+      "knowledge-base/01_vision_y_objetivos.md",
+      "knowledge-base/02_descripcion_general.md",
+      "knowledge-base/03_actores_y_roles.md",
+      "knowledge-base/04_modelo_de_datos.md",
+      "knowledge-base/05_reglas_de_negocio.md",
+      "knowledge-base/06_funcionalidades.md",
+      "knowledge-base/07_flujos_principales.md",
+      "knowledge-base/08_arquitectura_propuesta.md",
+      "knowledge-base/09_decisiones_y_supuestos.md",
+      "knowledge-base/10_preguntas_abiertas.md",
+      "knowledge-base/11_despliegue_y_vps.md",
+      "knowledge-base/README.md"
+    ]
+  }
 }
