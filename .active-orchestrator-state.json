@@ -100,5 +100,20 @@
       "knowledge-base/11_despliegue_y_vps.md",
       "knowledge-base/README.md"
     ]
+  },
+  "agents": {
+    "created_by": "agent-instruction",
+    "files": [
+      "AGENTS.md",
+      "CLAUDE.md"
+    ],
+    "reglas_applied": [
+      "opsx-mandatory-gate",
+      "decimal-for-money",
+      "no-n-plus-one",
+      "no-if-exists-fk",
+      "alpine-no-root",
+      "error-translation-rn-12"
+    ]
   }
 }
