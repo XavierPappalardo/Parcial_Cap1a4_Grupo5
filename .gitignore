@@ -1,0 +1,23 @@
+# Entornos virtuales
+.venv/
+venv/
+ENV/
+
+# Python bytecode y caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Variables de entorno y secretos (NUNCA versionar)
+.env
+*.env.local
+
+# Cobertura y reportes
+htmlcov/
+.coverage
+
+# IDEs
+.idea/
+.vscode/
+*.swp
