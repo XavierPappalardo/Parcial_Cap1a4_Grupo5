@@ -9,6 +9,17 @@ from app.core.config import get_settings
 from app.core.database import crear_fabrica_sesiones, crear_motor
 from app.modules.health.router import router as health_router
 
+# Registrar TODOS los modelos de tabla en SQLModel.metadata antes de que el
+# lifespan ejecute metadata.create_all: SQLModel registra la clase en la
+# metadata cuando su módulo se importa. Sin estas importaciones, el efecto
+# del arranque generaría un esquema vacío en la base de datos.
+from app.modules.autores import models as autores_models  # noqa: F401
+from app.modules.clientes import models as clientes_models  # noqa: F401
+from app.modules.editoriales import models as editoriales_models  # noqa: F401
+from app.modules.generos import models as generos_models  # noqa: F401
+from app.modules.libros import models as libros_models  # noqa: F401
+from app.modules.ventas import models as ventas_models  # noqa: F401
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
@@ -23,9 +34,15 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     app.state.engine = engine
     app.state.session_factory = session_factory
 
-    # 3. Crear tablas en la base de datos si no existen
-    async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
+    # 3. Crear tablas en la base de datos si no existen.
+    # Si la inicialización falla (p. ej. base inalcanzable), el motor igual
+    # debe liberarse: no se dejan conexiones abiertas al abortar el arranque.
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(SQLModel.metadata.create_all)
+    except BaseException:
+        await engine.dispose()
+        raise
 
     try:
         yield
