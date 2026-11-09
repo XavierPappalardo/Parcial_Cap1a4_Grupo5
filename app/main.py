@@ -23,9 +23,15 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     app.state.engine = engine
     app.state.session_factory = session_factory
 
-    # 3. Crear tablas en la base de datos si no existen
-    async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
+    # 3. Crear tablas en la base de datos si no existen.
+    # Si la inicialización falla (p. ej. base inalcanzable), el motor igual
+    # debe liberarse: no se dejan conexiones abiertas al abortar el arranque.
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(SQLModel.metadata.create_all)
+    except BaseException:
+        await engine.dispose()
+        raise
 
     try:
         yield
