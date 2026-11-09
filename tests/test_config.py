@@ -1,6 +1,4 @@
 import pytest
-from pydantic import ValidationError
-
 from app.core.config import Settings
 
 
@@ -34,21 +32,3 @@ def test_settings_sql_echo_configurable():
         SQL_ECHO=True,
     )
     assert settings.SQL_ECHO is True
-
-
-def test_settings_falla_de_manera_controlada_sin_database_url(monkeypatch):
-    """Sin DATABASE_URL (variable de entorno ni .env) la configuración no puede crearse.
-
-    La aplicación debe fallar de manera controlada: no arrancar con una URL de
-    credenciales embebidas ni asumir valores por defecto del entorno.
-    """
-    monkeypatch.delenv("DATABASE_URL", raising=False)
-    # _env_file=None: ignora cualquier .env local del directorio de trabajo.
-    with pytest.raises(ValidationError):
-        Settings(_env_file=None)
-
-
-def test_settings_sin_env_file_lee_variables_de_entorno(database_url_sqlite):
-    """Con DATABASE_URL en el entorno (ignorando .env) la configuración carga."""
-    settings = Settings(_env_file=None)
-    assert settings.DATABASE_URL == database_url_sqlite

@@ -1,1 +1,1 @@
-"""Módulos funcionales de la aplicación (un paquete por dominio)."""
+"""Módulos funcionales de la aplicación."""

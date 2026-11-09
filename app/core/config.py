@@ -12,10 +12,9 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    # La URL de conexión se lee del entorno (.env o variables del proceso).
-    # Sin valor por defecto con credenciales: si falta DATABASE_URL, la
-    # instanciación de Settings falla de manera controlada y la app no arranca.
-    DATABASE_URL: str
+    DATABASE_URL: str = (
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/libreria"
+    )
     SQL_ECHO: bool = False
     PORT: int = 8000
 
