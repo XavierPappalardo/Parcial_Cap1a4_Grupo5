@@ -1,0 +1,11 @@
+### C-01 — Liveness probe
+### Verifica que la aplicación está viva (no depende de DB)
+### Respuesta esperada: 200 OK { "estado": "vivo" }
+GET http://localhost:8000/health/live
+
+###
+
+### C-02 — Readiness probe
+### Verifica que la aplicación puede conectarse a la base de datos (SELECT 1)
+### Respuesta esperada: 200 OK { "estado": "listo" }
+GET http://localhost:8000/health/ready
