@@ -1,0 +1,57 @@
+### Casos mínimos Ej. 3 y 4 (alineados a matriz C donde aplica)
+### Requiere API corriendo (p. ej. uvicorn app.main:app --reload) y DB configurada.
+### Smoke documentado (7.2): 1) export/set DATABASE_URL, 2) uvicorn app.main:app, 3) GET /health/live+ready,
+### 4) POST editorial+autor+cliente, 5) POST libro con autores (201), 6) POST venta 2 renglones (201, precios/total),
+### 7) GET /libros/?titulo=' OR '1'='1 (200 seguro). No reclama evidencia VPS/Docker (Ej.5/6/deploy fuera de alcance).
+@base = http://127.0.0.1:8000
+
+### Health
+GET {{base}}/health/live
+GET {{base}}/health/ready
+
+### C-01: parámetro de ruta no entero -> 422
+GET {{base}}/libros/abc
+
+### Editorial (201 / 409 único)
+POST {{base}}/editoriales/
+Content-Type: application/json
+
+{"nombre": "Sudamericana", "pais": "Argentina"}
+
+### C-02 equivalente: email/ISBN repetido -> 409 (ajustar tras primer alta)
+POST {{base}}/clientes/
+Content-Type: application/json
+
+{"nombre": "Ana", "email": "ana@example.com"}
+
+### C-03: segundo perfil mismo cliente -> 409 (usar id real)
+# POST {{base}}/clientes/1/perfil
+# Content-Type: application/json
+# {"telefono":"123","direccion":"Calle 1"}
+
+### C-04: libro con editorial/autor inexistente -> 409
+POST {{base}}/libros/
+Content-Type: application/json
+
+{
+  "isbn":"ISBN-C04","titulo":"X","precio":"10.00","stock":1,
+  "editorial_id":99999,"genero_id":null,
+  "autores":[{"autor_id":99999,"rol":"autor","orden":1}]
+}
+
+### C-05: venta con libro/cliente inexistente -> 409
+POST {{base}}/ventas/
+Content-Type: application/json
+
+{"cliente_id":99999,"renglones":[{"libro_id":99999,"cantidad":1}]}
+
+### C-06: venta válida 2 renglones -> 201, precios copiados, total calculado (usar ids reales)
+# POST {{base}}/ventas/
+# Content-Type: application/json
+# {"cliente_id":1,"renglones":[{"libro_id":1,"cantidad":2},{"libro_id":4,"cantidad":1}]}
+
+### C-08: búsqueda segura (sin inyección) -> 200 lista vacía o coincidencias reales
+GET {{base}}/libros/?titulo=' OR '1'='1
+
+### RN-10 paginación 422
+GET {{base}}/editoriales/?limit=0
