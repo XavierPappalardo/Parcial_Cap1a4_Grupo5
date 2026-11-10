@@ -296,8 +296,14 @@ def test_dinero_es_decimal_con_precision_numerica():
     assert total.type.precision == 12 and total.type.scale == 2
     assert total.type.python_type is Decimal
 
+    def _es_float(columna):
+        try:
+            return columna.type.python_type is float
+        except NotImplementedError:
+            return False
+
     usa_float = any(
-        columna.type.python_type is float
+        _es_float(columna)
         for tabla in MD.tables.values()
         for columna in tabla.columns
     )
