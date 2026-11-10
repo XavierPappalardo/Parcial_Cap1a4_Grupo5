@@ -16,7 +16,9 @@ async def crear(session: AsyncSession, datos: EditorialCreate) -> Editorial:
 
 
 async def listar(session: AsyncSession, limit: int, offset: int) -> list[Editorial]:
-    result = await session.execute(select(Editorial).offset(offset).limit(limit))
+    result = await session.execute(
+        select(Editorial).order_by(Editorial.id).offset(offset).limit(limit)
+    )
     return list(result.scalars().all())
 
 

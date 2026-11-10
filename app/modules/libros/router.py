@@ -17,10 +17,13 @@ async def crear(data: LibroCreate, session: AsyncSession = Depends(get_session))
 @router.get("/", response_model=list[LibroRead])
 async def listar(
     titulo: str | None = Query(default=None),
+    genero_id: int | None = Query(default=None),
     p=Depends(paginacion),
     session: AsyncSession = Depends(get_session),
 ):
-    return await service.listar(session, p["limit"], p["offset"], titulo)
+    return await service.listar(
+        session, p["limit"], p["offset"], titulo, genero_id
+    )
 
 
 @router.get("/{libro_id}", response_model=LibroRead)

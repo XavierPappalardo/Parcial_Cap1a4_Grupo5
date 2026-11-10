@@ -17,6 +17,16 @@ from app.modules.clientes.router import router as clientes_router
 from app.modules.libros.router import router as libros_router
 from app.modules.ventas.router import router as ventas_router
 
+# Registro explícito de los modelos de dominio: garantiza que
+# SQLModel.metadata.create_all cree las 9 tablas al arrancar, incluso si
+# algún router deja de importarlos de forma transitiva.
+import app.modules.autores.models  # noqa: F401,E402
+import app.modules.clientes.models  # noqa: F401,E402
+import app.modules.editoriales.models  # noqa: F401,E402
+import app.modules.generos.models  # noqa: F401,E402
+import app.modules.libros.models  # noqa: F401,E402
+import app.modules.ventas.models  # noqa: F401,E402
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
