@@ -1,10 +1,11 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload, selectinload
 
 from app.core.common import aplicar_patch, obtener_o_404
 from app.modules.editoriales.models import Editorial
 from app.modules.editoriales.schemas import EditorialCreate, EditorialUpdate
-from app.modules.libros.models import Libro
+from app.modules.libros.models import Libro, LibroAutor
 
 
 async def crear(session: AsyncSession, datos: EditorialCreate) -> Editorial:
@@ -35,5 +36,14 @@ async def actualizar(session: AsyncSession, editorial_id: int, datos: EditorialU
 
 async def listar_libros(session: AsyncSession, editorial_id: int) -> list[Libro]:
     await obtener(session, editorial_id)
-    result = await session.execute(select(Libro).where(Libro.editorial_id == editorial_id))
-    return list(result.scalars().all())
+    stmt = (
+        select(Libro)
+        .where(Libro.editorial_id == editorial_id)
+        .options(
+            joinedload(Libro.editorial),
+            joinedload(Libro.genero),
+            selectinload(Libro.autorias).joinedload(LibroAutor.autor),
+        )
+    )
+    result = await session.execute(stmt)
+    return list(result.unique().scalars().all())

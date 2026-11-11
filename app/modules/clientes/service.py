@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload, selectinload
 from app.core.common import aplicar_patch, obtener_o_404
 from app.modules.clientes.models import Cliente, PerfilCliente
 from app.modules.clientes.schemas import ClienteCreate, ClienteUpdate, PerfilClienteCreate
-from app.modules.ventas.models import Venta
+from app.modules.ventas.models import RenglonVenta, Venta
 
 
 async def crear(session: AsyncSession, datos: ClienteCreate) -> Cliente:
@@ -54,7 +54,9 @@ async def listar_ventas(session: AsyncSession, cliente_id: int):
     stmt = (
         select(Venta)
         .where(Venta.cliente_id == cliente_id)
-        .options(selectinload(Venta.renglones))
+        .options(
+            selectinload(Venta.renglones).joinedload(RenglonVenta.libro)
+        )
     )
     result = await session.execute(stmt)
-    return list(result.scalars().all())
+    return list(result.unique().scalars().all())

@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_session
 from app.modules.generos import service
 from app.modules.generos.schemas import GeneroCreate, GeneroRead
+from app.modules.libros.schemas import LibroRead
 
 router = APIRouter(prefix="/generos", tags=["generos"])
 
@@ -18,18 +19,6 @@ async def listar(session: AsyncSession = Depends(get_session)):
     return await service.listar(session)
 
 
-@router.get("/{genero_id}/libros")
+@router.get("/{genero_id}/libros", response_model=list[LibroRead])
 async def listar_libros(genero_id: int, session: AsyncSession = Depends(get_session)):
-    libros = await service.listar_libros(session, genero_id)
-    return [
-        {
-            "id": l.id,
-            "isbn": l.isbn,
-            "titulo": l.titulo,
-            "precio": str(l.precio),
-            "stock": l.stock,
-            "editorial_id": l.editorial_id,
-            "genero_id": l.genero_id,
-        }
-        for l in libros
-    ]
+    return await service.listar_libros(session, genero_id)

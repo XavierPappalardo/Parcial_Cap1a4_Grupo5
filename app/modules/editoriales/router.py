@@ -5,6 +5,7 @@ from app.core.common import paginacion
 from app.core.database import get_session
 from app.modules.editoriales import service
 from app.modules.editoriales.schemas import EditorialCreate, EditorialRead, EditorialUpdate
+from app.modules.libros.schemas import LibroRead
 
 router = APIRouter(prefix="/editoriales", tags=["editoriales"])
 
@@ -31,18 +32,6 @@ async def actualizar(
     return await service.actualizar(session, editorial_id, data)
 
 
-@router.get("/{editorial_id}/libros")
+@router.get("/{editorial_id}/libros", response_model=list[LibroRead])
 async def listar_libros(editorial_id: int, session: AsyncSession = Depends(get_session)):
-    libros = await service.listar_libros(session, editorial_id)
-    return [
-        {
-            "id": l.id,
-            "isbn": l.isbn,
-            "titulo": l.titulo,
-            "precio": str(l.precio),
-            "stock": l.stock,
-            "editorial_id": l.editorial_id,
-            "genero_id": l.genero_id,
-        }
-        for l in libros
-    ]
+    return await service.listar_libros(session, editorial_id)

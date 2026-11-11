@@ -1,10 +1,11 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload, selectinload
 
 from app.core.common import obtener_o_404
 from app.modules.generos.models import Genero
 from app.modules.generos.schemas import GeneroCreate
-from app.modules.libros.models import Libro
+from app.modules.libros.models import Libro, LibroAutor
 
 
 async def crear(session: AsyncSession, datos: GeneroCreate) -> Genero:
@@ -26,5 +27,14 @@ async def obtener(session: AsyncSession, genero_id: int) -> Genero:
 
 async def listar_libros(session: AsyncSession, genero_id: int) -> list[Libro]:
     await obtener(session, genero_id)
-    result = await session.execute(select(Libro).where(Libro.genero_id == genero_id))
-    return list(result.scalars().all())
+    stmt = (
+        select(Libro)
+        .where(Libro.genero_id == genero_id)
+        .options(
+            joinedload(Libro.editorial),
+            joinedload(Libro.genero),
+            selectinload(Libro.autorias).joinedload(LibroAutor.autor),
+        )
+    )
+    result = await session.execute(stmt)
+    return list(result.unique().scalars().all())

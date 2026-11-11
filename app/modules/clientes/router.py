@@ -10,6 +10,7 @@ from app.modules.clientes.schemas import (
     PerfilClienteCreate,
     PerfilClienteRead,
 )
+from app.modules.ventas.schemas import RenglonReadOut
 
 router = APIRouter(prefix="/clientes", tags=["clientes"])
 
@@ -54,6 +55,13 @@ async def listar_ventas(cliente_id: int, session: AsyncSession = Depends(get_ses
                     "libro_id": r.libro_id,
                     "cantidad": r.cantidad,
                     "precio_unitario": str(r.precio_unitario),
+                    "libro": {
+                        "id": r.libro.id,
+                        "isbn": r.libro.isbn,
+                        "titulo": r.libro.titulo,
+                    }
+                    if r.libro
+                    else None,
                 }
                 for r in v.renglones
             ],

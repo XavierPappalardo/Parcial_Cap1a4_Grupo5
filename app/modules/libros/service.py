@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import bindparam, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
@@ -41,7 +41,7 @@ async def listar(
 ) -> list[Libro]:
     stmt = _query_libro_detalle()
     if titulo:
-        stmt = stmt.where(Libro.titulo.ilike(f"%{titulo}%"))
+        stmt = stmt.where(Libro.titulo.ilike(bindparam("titulo", f"%{titulo}%")))
     stmt = stmt.offset(offset).limit(limit)
     result = await session.execute(stmt)
     return list(result.unique().scalars().all())
