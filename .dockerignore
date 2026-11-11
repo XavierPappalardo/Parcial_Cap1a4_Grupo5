@@ -1,0 +1,33 @@
+# Contexto de build mínimo: solo app/ y requirements.txt llegan a la imagen.
+.git
+.gitignore
+.dockerignore
+.venv
+venv
+ENV
+__pycache__
+**/__pycache__
+**/*.py[cod]
+.pytest_cache
+**/.pytest_cache
+.coverage
+htmlcov
+.env
+*.env.local
+
+# Metadatos de agentes / OpenSpec / documentación de proceso
+openspec
+.agents
+.claude
+.atl
+.active-orchestrator-state.json
+AGENTS.md
+CLAUDE.md
+knowledge-base
+discovery
+docs
+
+# Pruebas y utilidades locales
+tests
+test
+pytest.ini

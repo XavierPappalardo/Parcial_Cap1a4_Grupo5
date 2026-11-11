@@ -2,6 +2,7 @@
 
 from typing import AsyncGenerator
 from fastapi import Request
+from sqlalchemy import event
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -12,11 +13,24 @@ from sqlalchemy.ext.asyncio import (
 
 def crear_motor(database_url: str, echo: bool = False) -> AsyncEngine:
     """Crea y retorna un motor asincrónico para la base de datos."""
-    return create_async_engine(
+    engine = create_async_engine(
         database_url,
         echo=echo,
         future=True,
     )
+
+    # SQLite (usado por la suite automatizada) no valida claves foráneas salvo
+    # que se active el PRAGMA. PostgreSQL las valida siempre; este bloque solo
+    # se registra para motores SQLite y no altera el comportamiento productivo.
+    if engine.url.get_backend_name() == "sqlite":
+
+        @event.listens_for(engine.sync_engine, "connect")
+        def _activar_claves_foraneas(dbapi_connection, connection_record) -> None:
+            cursor = dbapi_connection.cursor()
+            cursor.execute("PRAGMA foreign_keys=ON")
+            cursor.close()
+
+    return engine
 
 
 def crear_fabrica_sesiones(

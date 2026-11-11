@@ -1,3 +1,14 @@
+# ============================================================
+# Metadatos de agentes y OpenSpec: NO deben entregarse en el .zip
+# ============================================================
+openspec/
+.agents/
+.claude/
+.atl/
+.active-orchestrator-state.json
+AGENTS.md
+CLAUDE.md
+
 # Entornos virtuales
 .venv/
 venv/

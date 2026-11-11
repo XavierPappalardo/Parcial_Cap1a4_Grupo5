@@ -37,12 +37,19 @@ async def crear(session: AsyncSession, datos: LibroCreate) -> Libro:
 
 
 async def listar(
-    session: AsyncSession, limit: int, offset: int, titulo: str | None = None
+    session: AsyncSession,
+    limit: int,
+    offset: int,
+    titulo: str | None = None,
+    genero_id: int | None = None,
 ) -> list[Libro]:
     stmt = _query_libro_detalle()
     if titulo:
+        # RN-11: predicado parametrizado (binding), nunca concatenación SQL.
         stmt = stmt.where(Libro.titulo.ilike(f"%{titulo}%"))
-    stmt = stmt.offset(offset).limit(limit)
+    if genero_id is not None:
+        stmt = stmt.where(Libro.genero_id == genero_id)
+    stmt = stmt.order_by(Libro.id).offset(offset).limit(limit)
     result = await session.execute(stmt)
     return list(result.unique().scalars().all())
 
