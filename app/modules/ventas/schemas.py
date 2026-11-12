@@ -91,8 +91,11 @@ def venta_a_read(venta) -> dict:
                 "venta_id": r.venta_id,
                 "libro_id": r.libro_id,
                 "cantidad": r.cantidad,
-                "precio_unitario": r.precio_unitario,
-                "subtotal": r.cantidad * r.precio_unitario,
+                # La consigna muestra los importes como strings con dos
+                # decimales; FastAPI convertiría un Decimal a float si se
+                # devolviera el objeto directamente.
+                "precio_unitario": str(r.precio_unitario),
+                "subtotal": str(r.cantidad * r.precio_unitario),
                 "titulo": titulo,
             }
         )
@@ -113,7 +116,7 @@ def venta_a_read(venta) -> dict:
         "id": venta.id,
         "cliente_id": venta.cliente_id,
         "fecha": venta.fecha,
-        "total": venta.total,
+        "total": str(venta.total),
         "cliente": cliente,
         "renglones": renglones,
     }

@@ -1,5 +1,6 @@
 """Punto de entrada principal de la aplicación FastAPI y ciclo de vida."""
 
+import logging
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 from fastapi import FastAPI
@@ -16,6 +17,12 @@ from app.modules.health.router import router as health_router
 from app.modules.clientes.router import router as clientes_router
 from app.modules.libros.router import router as libros_router
 from app.modules.ventas.router import router as ventas_router
+
+# D-07: uvicorn configura sus propios loggers, pero no el logger raíz. Sin
+# esta configuración, el logging.info() del aviso de comprobante no aparece en
+# `docker logs` (el nivel por defecto del root logger es WARNING).
+logging.basicConfig(level=logging.INFO)
+logging.getLogger().setLevel(logging.INFO)
 
 
 @asynccontextmanager

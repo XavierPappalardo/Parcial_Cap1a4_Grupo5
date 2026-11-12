@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from decimal import Decimal
 
 from fastapi import HTTPException
@@ -26,7 +27,11 @@ async def crear(session: AsyncSession, datos: VentaCreate) -> Venta:
     # Si falta algún libro, la FK de renglon_venta.libro_id fallará al persistir -> 409.
     # Pero para copiar precio necesitamos el libro; si no está, no podemos calcular RN-06/07.
     # Intentamos construir con lo disponible y dejamos que DB valide cliente/libro inexistente.
-    venta = Venta(cliente_id=datos.cliente_id, total=Decimal("0.00"))
+    venta = Venta(
+        cliente_id=datos.cliente_id,
+        fecha=datetime.now(timezone.utc),
+        total=Decimal("0.00"),
+    )
     total = Decimal("0.00")
     for r in datos.renglones:
         libro = libros.get(r.libro_id)
