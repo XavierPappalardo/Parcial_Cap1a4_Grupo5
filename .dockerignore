@@ -1,0 +1,43 @@
+# Secretos y configuración local: la DATABASE_URL entra por --env-file, nunca en la imagen.
+.env
+.env.*
+*.env.local
+!.env.example
+.venv/
+venv/
+ENV/
+
+# Historial de Git y metadatos que no se usan en runtime.
+.git/
+.gitignore
+.gitattributes
+
+# Bytecode y cachés: se generan dentro del contenedor si hicieran falta.
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Pruebas, scripts de evidencia y documentación: no son parte del runtime.
+tests/
+test/
+pytest.ini
+scripts/
+evidencia/
+discovery/
+knowledge-base/
+openspec/
+.agents/
+.claude/
+.gstack/
+*.md
+consigna_extraida.txt
+
+# Artefactos de entrega y locales.
+*.zip
+*.tar
+*.log
