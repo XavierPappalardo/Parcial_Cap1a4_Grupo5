@@ -1,22 +1,6 @@
-# DEPLOY.md — Imagen Docker y despliegue en el VPS
+**URL Pública de la API (Swagger UI):**
+https://app-grupo2-libreria-backend.ldb9fn.easypanel.host/docs
 
-> Proyecto: **Librería API** — Programación III, Parcial Capítulos 1 a 4.
-> Este documento cubre el **Ejercicio 7 (contenedor: la imagen)**. Los datos del
-> **Ejercicio 8** (URL pública, fecha y hora exactas del despliegue, puerto asignado
-> y evidencia real de los casos D) se completan al poner la imagen en línea.
-
-| Dato | Valor |
-|---|---|
-| Imagen base | `python:3.12-alpine` (74,8 MB verificada localmente con Docker 29.9.3; 74,7 MB según la medición de la cátedra con Docker 29.2; límite: 100 MB) |
-| Imagen del proyecto | `libreria` |
-| Contenedor | `libreria` |
-| Archivo de variables en el servidor | `~/libreria.env` (no se versiona ni se incluye en la imagen) |
-| Puerto interno | `8000` |
-| Puerto publicado | `<PUERTO_ASIGNADO>` — lo define la cátedra (en los ejemplos se usa `8000`) |
-| URL pública | _Pendiente de completar en el Ejercicio 8_ |
-| Día y hora del despliegue | _Pendiente de completar en el Ejercicio 8_ |
-
----
 
 ## 1. Decisiones de la imagen y su justificación
 
