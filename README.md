@@ -2,8 +2,8 @@ Proyecto Libreria API - Grupo 5
 
 #Integrantes:
 Xavier Pappalardo
-Lautaro Gomez
-Nicolas bañez
+Lautaro Gómez
+Nicolas Ibañez
 Maximiliano Reinoso
 Martin Sisterna
 Benjamin Arrollo
